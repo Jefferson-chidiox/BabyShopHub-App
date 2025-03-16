@@ -36,11 +36,3 @@ To get started with the BabyShopUB Admin App, follow these steps:
 ## Resources
 
 For help getting started with Flutter development, view the [online documentation](https://docs.flutter.dev/), which offers tutorials, samples, guidance on mobile development, and a full API reference.
-
-## Contributing
-
-We welcome contributions! Please read our [contributing guidelines](CONTRIBUTING.md) for more information.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
