@@ -1,14 +1,26 @@
+import 'package:babyshopub_admin_app/controllers/auth_service.dart';
 import 'package:babyshopub_admin_app/firebase_options.dart';
+import 'package:babyshopub_admin_app/views/admin_home.dart';
 // import 'package:babyshopub_admin_app/views/admin_home.dart';
 import 'package:babyshopub_admin_app/views/login.dart';
+import 'package:babyshopub_admin_app/views/signup.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
 
-    DefaultFirebaseOptions.currentPlatform;
+  // Load environment variables
+  await dotenv.load(fileName: ".env");
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.debug,
+  );
+
   runApp(const MyApp());
 }
 
@@ -38,12 +50,39 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      routes:{
-        "/" : (context)=> LoginPage(),
-        "/login" : (context)=> LoginPage(),
-        "/signup" : (context)=> LoginPage(),
+      routes: {
+        "/": (context) => CheckUser(),
+        "/login": (context) => LoginPage(),
+        "/signup": (context) => SingupPage(),
+        "/home": (context) => AdminHome(),
       },
     );
   }
 }
 
+class CheckUser extends StatefulWidget {
+  const CheckUser({super.key});
+
+  @override
+  State<CheckUser> createState() => _CheckUserState();
+}
+
+class _CheckUserState extends State<CheckUser> {
+  @override
+  void initState() {
+    super.initState(); // Call this first
+    AuthService().isLoggedIn().then((value) {
+      if (!mounted) return; // Ensure the widget is still in the tree
+      if (value) {
+        Navigator.pushReplacementNamed(context, "/home");
+      } else {
+        Navigator.pushReplacementNamed(context, "/login");
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: Center(child: CircularProgressIndicator()));
+  }
+}
